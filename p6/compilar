@@ -1,0 +1,8 @@
+gcc PyV.c -Wall -g -c
+gcc A.c -Wall -g -c
+gcc B.c -Wall -g -c
+gcc C.c -Wall -g -c
+
+gcc -Wall -g PyV.o A.o -o A
+gcc -Wall -g PyV.o B.o -o B
+gcc -Wall -g PyV.o C.o -o C
