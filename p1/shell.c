@@ -14,9 +14,14 @@ void ejecutar(char *, char **);
 int esComando(char **);
 void ejecutarComando(char *, char **);
 
+void f_sigchld(int);
+void f_sigint(int);
+
 int salir = 0;
 int main()
 {
+    signal(SIGCHLD, (void*) f_sigchld);
+    signal(SIGINT, (void*) f_sigint);
     while (!salir)
     {
         printf(">> ");
@@ -32,6 +37,30 @@ int main()
         free(linea);
     }
 }
+
+void f_sigchld(int s){
+    pid_t pid;
+    int status;
+
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+        printf("Hijo %d termino\n", pid);
+    }
+}
+
+void f_sigint(int s){
+    // espera a que terminen todos los procesos hijos
+    // si no hay hijos, wait(NULL) devuelve -1, si no el pid.
+    // es bloqueante
+    pid_t pid;
+    printf("\nCerrando programa...\n");
+    while((pid = wait(NULL)) > 0){
+        printf("Termino hijo %d\n", pid);
+    }
+    // devuelvo el handler al default y salgo con sigint
+    signal(SIGINT, SIG_DFL);
+    raise(SIGINT);
+}
+
 
 char *leerLinea()
 {
@@ -72,7 +101,7 @@ char **parsearLinea(char *linea)
 
 void ejecutar(char *linea, char **args)
 {
-    int foreground = 0;
+    int background = 0;
     int binario = 0;
     // cuento los argumentos.
     int argc = 0;
@@ -88,9 +117,9 @@ void ejecutar(char *linea, char **args)
     else
     {
         // me fijo si es fore o back.
-        // printf("Ultumo argumento; \"%s\"\n", args[argc - 1]);
-        if (!(args[argc - 1] == "&"))
-            foreground = 1;
+        printf("Ultumo argumento; \"%s\"\n", args[argc - 1]);
+        if (args[argc - 1] == "&")
+            background = 1;
 
         pid_t pid = fork();
 
@@ -103,9 +132,13 @@ void ejecutar(char *linea, char **args)
         else if (pid > 0)
         {
             int estado;
-            // printf("Esperando al hijo pid %d\n", pid);
-            waitpid(pid, &estado, 0);
-            // printf("Termino hijo pid %d con estado %d\n", pid, estado / 256);
+            if (!background)
+            {
+                printf("Esperando al hijo foreground pid %d\n", pid);
+                waitpid(pid, &estado, 0);
+                printf("Termino hijo foreground pid %d con estado %d\n", pid, estado / 256);
+            }
+            
         }
         else
         {
