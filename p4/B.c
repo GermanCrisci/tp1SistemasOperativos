@@ -18,7 +18,7 @@ int main(void){
 
     printf("Se inicio B\n");
 
-    int shmid = shmget(0xd, 0, 0);
+    int shmid = shmget(0xa, 0, 0);
     int *iter = (int *) shmat(shmid, 0, 0); 
 
     for (int i = 0; i < (*iter); i++)

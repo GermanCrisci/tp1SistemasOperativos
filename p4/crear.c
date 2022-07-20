@@ -4,6 +4,7 @@
 #include <semaphore.h>
 #include <fcntl.h>
 #include <wait.h>
+#include <sys/ipc.h>
 #include <sys/shm.h>
 
 int main(int argc, char *argv[])
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
     printf("Se iterara %d veces\n", iter);
 
 
-    int shmid = shmget(0xd, sizeof(int), IPC_CREAT | IPC_EXCL | 0700);
+    int shmid = shmget(0xa, sizeof(int), IPC_CREAT | IPC_EXCL | 0600);
     if (shmid < 0)
     {
         printf("Hubo un error al guardar el numero de iteraciones en memoria compartida\n");
