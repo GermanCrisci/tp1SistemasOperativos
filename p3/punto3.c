@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     pthread_join(hiloB, NULL);
     pthread_join(hiloC, NULL);
     
-    printf("Fin main!");
+    printf("Fin main!\n");
     return 0;
 }
 
@@ -54,14 +54,11 @@ void f_hiloA(void * datos)
 {
     while(1){
         pthread_mutex_lock(&A);
-            if (terminoC)
-            {
-                break;
-            }
+            if (terminoC) break;
             printf("A");
         pthread_mutex_unlock(&X);       
     }
-    printf("Termine A!\n");
+    printf("Termino A!\n");
     return;
 }
 
@@ -70,15 +67,12 @@ void f_hiloB(void * datos)
     while(1){
         pthread_mutex_lock(&B);
         pthread_mutex_lock(&X);
-            if(terminoC)
-            {
-                break;
-            }
+            if (terminoC) break;
             printf("B");
         pthread_mutex_unlock(&A);
         pthread_mutex_unlock(&C);
     }
-    printf("Termine B!\n");
+    printf("Termino B!\n");
     return;
 }
 
@@ -88,12 +82,11 @@ void f_hiloC(void * datos)
     while(!terminoC){
         pthread_mutex_lock(&C);
         pthread_mutex_lock(&X);
-
             printf("C");
             i++;
             if (i >= iteraciones)
             {
-                printf("\n");
+                printf("\n"); // nos aseguramos que terminen los otros hilos.
                 terminoC = 1;
                 pthread_mutex_unlock(&X);       
             }
@@ -101,6 +94,6 @@ void f_hiloC(void * datos)
         pthread_mutex_unlock(&B);
 
     }
-    printf("Termine C!\n");
+    printf("Termino C!\n");
     return;
 }
