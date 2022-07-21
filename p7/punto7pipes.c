@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
             recibirMsg(fdX[0], msg, 100);
             printf("B");
             printf("Enviando mensaje a pipe A\n");
-            enviarMsg(fdA[1], "Post A");
+            enviarMsg(fdA[1], "Post A\n");
             printf("Enviando mensaje a pipe C\n");
-            enviarMsg(fdC[1], "Post C");
+            enviarMsg(fdC[1], "Post C\n");
         }
 
         close(fdB[0]);
@@ -88,9 +88,9 @@ int main(int argc, char *argv[])
             recibirMsg(fdX[0], msg, 100);
             printf("B");
             printf("Enviando mensaje a pipe A\n");
-            enviarMsg(fdA[1], "Post A");
+            enviarMsg(fdA[1], "Post A\n");
             printf("Enviando mensaje a pipe B\n");
-            enviarMsg(fdB[1], "Post B");
+            enviarMsg(fdB[1], "Post B\n");
         }
 
         close(fdC[0]);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
         recibirMsg(fdA[0], msg, 100);
         printf("A");
         printf("Enviando mensaje a pipe X\n");
-        enviarMsg(fdX[1], "Post X");
+        enviarMsg(fdX[1], "Post X\n");
     }
 
     close(fdA[0]);
