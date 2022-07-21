@@ -25,13 +25,17 @@ int valSemX;
 
 int main(int argc, char *argv[])
 {
-
-
+    if (!argv[1])
+    {
+        printf("Ingrese un numero de iteraciones como argumento!\n");
+        return 0;
+    }
+    
 
     // crear semaforos
     crearSemaforos();
 
-    iter = 2;
+    iter = atoi(argv[1]);
     printf("Se imprimiran %d itreaciones\n", iter);
 
     pid_t pid;
