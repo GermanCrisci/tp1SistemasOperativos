@@ -9,7 +9,6 @@
 
 void mostrarSemaforos(char*);
 void crearSemaforos();
-void buscarSemaforos();
 
 int iter;
 
@@ -43,7 +42,6 @@ int main(int argc, char *argv[])
     pid = fork();
     if (pid == 0)
     {
-        buscarSemaforos();
         for (int i = 0; i < iter; i++)
         {
             sem_wait(semB);
@@ -59,7 +57,6 @@ int main(int argc, char *argv[])
     pid = fork();
     if (pid == 0)
     {
-        buscarSemaforos();
         for (int i = 0; i < iter; i++)
         {
             sem_wait(semC);
@@ -73,7 +70,6 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < (iter * 2); i++)
     {
-        buscarSemaforos();
         sem_wait(semA);
         printf("A\n");
         sem_post(semX);
@@ -84,14 +80,6 @@ int main(int argc, char *argv[])
     printf("\nFin main!\n");
 
     return 0;
-}
-
-void buscarSemaforos(){
-    semA = sem_open("/semA", 0);
-    semB = sem_open("/semB", 0);
-    semC = sem_open("/semC", 0);
-    semX = sem_open("/semX", 0);
-
 }
 
 void crearSemaforos(){
