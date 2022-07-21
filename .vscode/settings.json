@@ -5,6 +5,10 @@
         "mman.h": "c",
         "unistd.h": "c",
         "stdio.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "types.h": "c",
+        "pthread.h": "c",
+        "sem.h": "c",
+        "wait.h": "c"
     }
 }

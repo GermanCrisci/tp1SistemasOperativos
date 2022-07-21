@@ -1,0 +1,4 @@
+gcc PyV.c -Wall -g -c
+gcc punto7.c -Wall -g -c
+
+gcc -Wall -g PyV.o punto7.o -o punto7
