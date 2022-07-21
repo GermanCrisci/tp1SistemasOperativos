@@ -4,37 +4,34 @@
 #include <semaphore.h>
 #include <fcntl.h>
 #include <wait.h>
-#include <errno.h>
-#include <sys/shm.h>
 #include <sys/ipc.h>
-#include <sys/types.h>
-#include <sys/sem.h>
+#include <sys/shm.h>
+
+void mostrarSemaforos(char*);
+void crearSemaforos();
+void buscarSemaforos();
 
 int iter;
-void P(int, int);
-void V(int, int);
+
+sem_t * semA;
+sem_t * semB;
+sem_t * semC;
+sem_t * semX;
+
+int valSemA;
+int valSemB;
+int valSemC;
+int valSemX;
 
 int main(int argc, char *argv[])
 {
-    if (!argv[1])
-    {
-        printf("Porfavor ingrese un numero de iteraciones como argumento\n");
-        return 0;
-    }
 
-    int semid = semget(0xa, 4, IPC_CREAT | IPC_EXCL | 0660);
-    if (semid == -1)
-    {
-        printf("Error de creacion de semaforos\n");
-    }
-    printf("semid = %d\n", semid);
 
-    semctl(semid, 0, SETVAL, 1);
-    semctl(semid, 1, SETVAL, 1);
-    semctl(semid, 2, SETVAL, 0);
-    semctl(semid, 3, SETVAL, 0);
 
-    iter = atoi(argv[1]);
+    // crear semaforos
+    crearSemaforos();
+
+    iter = 2;
     printf("Se imprimiran %d itreaciones\n", iter);
 
     pid_t pid;
@@ -42,13 +39,15 @@ int main(int argc, char *argv[])
     pid = fork();
     if (pid == 0)
     {
+        buscarSemaforos();
         for (int i = 0; i < iter; i++)
         {
-            P(semid, 1);
-            P(semid, 3);
-                printf("B");
-            V(semid, 0);
-            V(semid, 2);
+            sem_wait(semB);
+            sem_wait(semX);
+            printf("B\n");
+            sleep(1);
+            sem_post(semA);
+            sem_post(semC);
         }
         return 1;
     }
@@ -57,28 +56,61 @@ int main(int argc, char *argv[])
     pid = fork();
     if (pid == 0)
     {
+        buscarSemaforos();
         for (int i = 0; i < iter; i++)
         {
-            P(semid, 2);
-            P(semid, 3);
-                printf("C");
-            V(semid, 0);
-            V(semid, 1);
+            sem_wait(semC);
+            sem_wait(semX);
+            printf("C\n");
+            sleep(1);
+            sem_post(semA);
+            sem_post(semB);
         }
         return 1;
     }
-    
+
     for (int i = 0; i < (iter * 2); i++)
     {
-        P(semid, 0);
-            printf("A");
-        V(semid, 3);
+        buscarSemaforos();
+        sem_wait(semA);
+        printf("A\n");
+        sleep(1);
+        sem_post(semX);
     }
 
     wait(0);
     wait(0);
-    semctl(semid, 0, IPC_RMID);
     printf("\nFin main!\n");
 
     return 0;
+}
+
+void buscarSemaforos(){
+    semA = sem_open("/semA", 0);
+    semB = sem_open("/semB", 0);
+    semC = sem_open("/semC", 0);
+    semX = sem_open("/semX", 0);
+
+}
+
+void crearSemaforos(){
+    sem_unlink("/semA");
+    sem_unlink("/semB");
+    sem_unlink("/semC");
+    sem_unlink("/semX");
+    
+    semA = sem_open("/semA", O_CREAT | O_EXCL, 0644, 1);
+    semB = sem_open("/semB", O_CREAT | O_EXCL, 0644, 1);
+    semC = sem_open("/semC", O_CREAT | O_EXCL, 0644, 0);
+    semX = sem_open("/semX", O_CREAT | O_EXCL, 0644, 0);
+}
+
+void mostrarSemaforos(char * str){
+    sem_getvalue(semA, &valSemA);
+    sem_getvalue(semB, &valSemB);
+    sem_getvalue(semC, &valSemC);
+    sem_getvalue(semX, &valSemX);
+
+    //printf("%s A:%d B:%d C:%d X:%d\n", str, valSemA, valSemB, valSemC, valSemX);
+
 }
