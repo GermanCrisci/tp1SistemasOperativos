@@ -101,5 +101,4 @@ void mostrarSemaforos(char * str){
     sem_getvalue(semX, &valSemX);
 
     //printf("%s A:%d B:%d C:%d X:%d\n", str, valSemA, valSemB, valSemC, valSemX);
-
 }
