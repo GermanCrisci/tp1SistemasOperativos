@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procesos</title>
+</head>
+<body>
+  <div>
+    <h3>Correr Comandos</h3>
+    <input type="text" name="cmd" id="inputCmd" placeholder="Comando..." required><br>
+    <input type="text" name="args" id="inputArgs" placeholder="Argumentos..."><br>
+    <button id="boton-peticion">Enviar Peticion</button>
+  </div>
+  <div>
+    <h3>Respuesta</h3>
+    <p id="respuesta">
+      
+    </p>
+  </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $('#boton-peticion').click(() => {
+    $.ajax({
+      url: 'cgi-bin/cmd.cgi',
+      type: 'GET',
+      data: {
+        'cmd':  $('#inputCmd').val(),
+        'args': $('#inputArgs').val()
+      },
+      dataType: 'text',
+      success: function (res) {
+          $('#respuesta').html('<pre>'+res+'</pre>');
+      }
+    })
+  })
+</script>
+</html>
