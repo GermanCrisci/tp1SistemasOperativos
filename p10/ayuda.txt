@@ -2,4 +2,4 @@ Se cambian los permisos a las carpetas para poder editar con:
     sudo chmod -R a+rwx dirCarpeta
 
 index.html va en /var/www/html
-como uso jquery necesitas conexion a internet.
+como uso jquery necesitas conexion a internet. 
