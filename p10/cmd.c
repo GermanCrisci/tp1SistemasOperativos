@@ -36,9 +36,7 @@ char *argumentosCombinado[101];
 
 int main(int argc, char *argv[])
 {
-    int link[2];
     pid_t pid;
-    char output[4096];
 
     memset(cmdargs, 0, 2048);
     int rc = obtenercgi(cmdargs, 2048);
@@ -61,32 +59,19 @@ int main(int argc, char *argv[])
         argumentosCombinado[i + 1] = argumentos[i];
     }
 
-    // tomo los argumentos y el cmd
-
-    if (pipe(link) == -1)
-        printError("pipe");
-
     if ((pid = fork()) == -1)
         printError("fork");
 
     if (pid == 0)
     {
-
-        dup2(link[1], STDOUT_FILENO);
-        close(link[0]);
-        close(link[1]);
-
         execvp(cmd, (char **)argumentosCombinado);
         printError("execvp");
     }
     else
     {
-        close(link[1]);
         wait(0); // espero a que termine el hijo
-        int nbytes = read(link[0], output, sizeof(output));
-        printf("Se leyeron %d bytes\n", nbytes);
-        printf("Output exec:\n%s", output);
     }
+
     return 1;
 }
 
