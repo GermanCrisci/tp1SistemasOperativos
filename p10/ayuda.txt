@@ -1,8 +1,0 @@
-Tutorial del profe de instalar el lighttpd
-Cambiar los permisos a las carpetas de cgi-bin
-    para que corra los programas con esto:
-    sudo chmod -R a+rwx /usr/lib/cgi-bin/
-    Esto te deja crear y correr archivos
-
-Agregue algunas librerias que faltaban al codigo en c.
-Usando el comando man en terminal.
