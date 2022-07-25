@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	close(fd[1]);
 	//el padre espera la señal sigchld del hijo
 	pause();
-	
+	close(fd[0]);
 
 }
 	return 0;
