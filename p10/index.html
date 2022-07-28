@@ -9,13 +9,22 @@
 <body>
   <div>
     <h3>Correr Comandos</h3>
-    <input type="text" name="cmd" id="inputCmd" placeholder="Comando..." required><br>
-    <input type="text" name="args" id="inputArgs" placeholder="Argumentos..."><br>
+    <span>
+      <label for="inputCmd">Comando:</label><br>
+      <select name="inputCmd" id="inputCmd">
+        <option value="ps">ps</option>
+        <option value="ls">ls</option>
+      </select>
+    </span><br>
+    <span>
+      <label for="inputArgs">Argumentos:</label><br>
+      <input type="text" name="args" id="inputArgs">
+    </span><br>
     <button id="boton-peticion">Enviar Peticion</button>
   </div>
   <div>
     <h3>Respuesta</h3>
-    <p id="respuesta">
+    <p id="respuesta"> 
       
     </p>
   </div>

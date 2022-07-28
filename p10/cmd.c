@@ -29,8 +29,10 @@ void tagInput(const char *label, const char *id, const char *tipo, const char *v
 long long timestamp();
 void logmsg(const char *archivo, const char *programa, const char *mensaje);
 void parsearLinea(char *linea);
+int comandoPermitido();
 
 char cmdargs[2048], args[1024], cmd[1024], msg[300];
+char cmdPermitidos[2][1024] = {"ps", "ls"};
 char *argumentos[100];
 char *argumentosCombinado[101];
 
@@ -49,30 +51,43 @@ int main(int argc, char *argv[])
     logmsg("login.txt", argv[0], msg);
     parsearLinea(args);
 
-    argumentosCombinado[0] = cmd;
-    for (size_t i = 0; i < 100; i++)
-    {
-        if (argumentos[i] == NULL)
+    if (comandoPermitido()) {
+        argumentosCombinado[0] = cmd;
+        for (size_t i = 0; i < 100; i++)
         {
-            argumentosCombinado[i + 1] = NULL;
+            if (argumentos[i] == NULL)
+            {
+                argumentosCombinado[i + 1] = NULL;
+            }
+            argumentosCombinado[i + 1] = argumentos[i];
         }
-        argumentosCombinado[i + 1] = argumentos[i];
-    }
 
-    if ((pid = fork()) == -1)
-        printError("fork");
+        if ((pid = fork()) == -1)
+            printError("fork");
 
-    if (pid == 0)
-    {
-        execvp(cmd, (char **)argumentosCombinado);
-        printError("execvp");
+        if (pid == 0)
+        {
+            execvp(cmd, (char **)argumentosCombinado);
+            printError("execvp");
+        }
+        else
+        {
+            wait(0); // espero a que termine el hijo
+        }          
+    } else {
+        printf("ERROR: Intento correr un comando no permitido\n");
     }
-    else
-    {
-        wait(0); // espero a que termine el hijo
-    }
-
     return 1;
+}
+
+int comandoPermitido()
+{
+    int c = 0;
+    while(c < (sizeof(cmdPermitidos)/sizeof(cmdPermitidos[0]))){
+        if (strcmp(cmd,cmdPermitidos[c])) return 1;
+        c++;
+    }
+    return 0;
 }
 
 void parsearLinea(char *linea)
