@@ -84,7 +84,7 @@ int comandoPermitido()
 {
     int c = 0;
     while(c < (sizeof(cmdPermitidos)/sizeof(cmdPermitidos[0]))){
-        if (strcmp(cmd,cmdPermitidos[c])) return 1;
+        if (!strcmp(cmd,cmdPermitidos[c])) return 1;
         c++;
     }
     return 0;
