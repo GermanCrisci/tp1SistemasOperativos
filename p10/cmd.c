@@ -32,7 +32,7 @@ void parsearLinea(char *linea);
 int comandoPermitido();
 
 char cmdargs[2048], args[1024], cmd[1024], msg[300];
-char cmdPermitidos[2][1024] = {"ps", "ls"};
+char cmdPermitidos[4][1024] = {"df", "ipcs", "ps", "ls"};
 char *argumentos[100];
 char *argumentosCombinado[101];
 
