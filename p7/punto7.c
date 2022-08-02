@@ -77,7 +77,13 @@ int main(int argc, char *argv[])
 
     wait(0);
     wait(0);
-    printf("\nFin main!\n");
+
+    sem_unlink("/semA");
+    sem_unlink("/semB");
+    sem_unlink("/semC");
+    sem_unlink("/semX");
+
+    printf("Fin main!\n");
 
     return 0;
 }
