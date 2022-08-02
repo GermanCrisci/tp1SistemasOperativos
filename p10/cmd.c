@@ -36,7 +36,7 @@ char cmdargs[2048], args[1024], cmd[1024], msg[300];
 char cmdPermitidos[4][1024] = {"df", "ipcs", "ps", "ls"};
 char *argumentos[100];
 char *argumentosCombinado[101];
-char salidaHijo[5];
+char salidaHijo[1024];
 int fd[2];
 
 int main(int argc, char *argv[])
