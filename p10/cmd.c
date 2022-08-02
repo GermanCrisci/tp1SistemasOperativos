@@ -30,15 +30,24 @@ long long timestamp();
 void logmsg(const char *archivo, const char *programa, const char *mensaje);
 void parsearLinea(char *linea);
 int comandoPermitido();
+void f_sigchld(int);
 
 char cmdargs[2048], args[1024], cmd[1024], msg[300];
 char cmdPermitidos[4][1024] = {"df", "ipcs", "ps", "ls"};
 char *argumentos[100];
 char *argumentosCombinado[101];
+char salidaHijo[5];
+int fd[2];
 
 int main(int argc, char *argv[])
 {
     pid_t pid;
+    int pip = pipe(fd);
+	
+	if (pip == -1) {
+		printf("Error creacion pipe\n");
+        return 0;
+    }
 
     memset(cmdargs, 0, 2048);
     int rc = obtenercgi(cmdargs, 2048);
@@ -62,23 +71,51 @@ int main(int argc, char *argv[])
             argumentosCombinado[i + 1] = argumentos[i];
         }
 
-        if ((pid = fork()) == -1)
+        if ((pid = fork()) == -1){
             printError("fork");
+            close(fd[1]);
+            close(fd[0]);
+            return 0;
+        }
 
         if (pid == 0)
         {
+            dup2 (fd[1], STDOUT_FILENO);
+            close(fd[0]);
+            close(fd[1]);
             execvp(cmd, (char **)argumentosCombinado);
-            printError("execvp");
+            printError("Error: execvp");
         }
         else
         {
-            wait(0); // espero a que termine el hijo
+            signal(SIGCHLD, (void*) f_sigchld);
+            close(fd[1]);
+            //el padre espera la señal sigchld del hijo
+            pause();
+            close(fd[0]);
         }          
     } else {
         printf("ERROR: Intento correr un comando no permitido\n");
     }
     return 1;
 }
+
+void f_sigchld(int s){
+    pid_t pid;
+    int status;
+
+    while ((pid = wait(&status)) > 0) {
+        printf("Hijo con pid=%d termino\n", pid);
+        int bytes;
+        // uso ciclo para no limitarme por el tamanio de lo que devuelve el hijo
+        while (bytes = read(fd[0], salidaHijo, sizeof(salidaHijo)))
+        {
+            salidaHijo[bytes] = '\0';
+            printf("%s",salidaHijo);
+        }
+    }
+}
+
 
 int comandoPermitido()
 {
